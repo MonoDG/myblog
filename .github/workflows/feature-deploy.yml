@@ -72,11 +72,12 @@ jobs:
 
     - name: Deploy to DigitalOcean Droplet
       env:
+        BRANCH: ${{ steps.extract_branch.outputs.branch }}
         SSH_KEY: ${{ secrets.SSH_KEY }}
       run: |
         echo "${SSH_KEY}" > deploy_key.pem
         chmod 600 deploy_key.pem
-        ssh -o StrictHostKeyChecking=no -i deploy_key.pem root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull myblog::${{ steps.extract_branch.outputs.branch }} && docker run -d -p 80:80 myblog:${{ steps.extract_branch.outputs.branch }}"
+        ssh -o StrictHostKeyChecking=no -i deploy_key.pem root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull monodg/myblog:$BRANCH && docker run -d -p 80:80 monodg/myblog:$BRANCH"
 
     - name: Remove DNS Record on Cloudflare
       if: github.event_name == 'delete'
