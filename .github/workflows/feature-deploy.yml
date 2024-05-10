@@ -33,7 +33,7 @@ jobs:
         SUBDOMAIN="${BRANCH_NAME}.themono.work"
         IP_ADDRESS="${{ secrets.FEATURE_DROPLET_IP }}"
         # Check if DNS record already exists
-        RECORD_EXISTS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$(CF_ZONE_ID)/dns_records?type=A&name=${SUBDOMAIN}") \
+        RECORD_EXISTS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$(CF_ZONE_ID)/dns_records?type=A&name=${SUBDOMAIN}" \
           -H "Authorization: Bearer ${CF_API_TOKEN}" \
           -H "Content-Type: application/json" | jq -r '.result[0].id')
         # Create or update DNS record
