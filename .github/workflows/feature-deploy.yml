@@ -75,7 +75,7 @@ jobs:
         BRANCH: ${{ steps.extract_branch.outputs.branch }}
         SSH_KEY: ${{ secrets.SSH_KEY }}
       run: |
-        echo "${SSH_KEY}" > deploy_key.pem
+        echo "$SSH_KEY" > deploy_key.pem
         chmod 600 deploy_key.pem
         ssh -o StrictHostKeyChecking=no -i deploy_key.pem root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull monodg/myblog:$BRANCH && docker run -d -p 80:80 monodg/myblog:$BRANCH"
 
