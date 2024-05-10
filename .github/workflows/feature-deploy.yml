@@ -22,7 +22,7 @@ jobs:
     - name: Extract branch name
       id: extract_branch
       run: |
-        echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> "$GITHUB_OUTPUT"
+        echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed 's|feature/||g' | tr -d -)" >> "$GITHUB_OUTPUT"
 
     - name: Setup or Update DNS Record on Cloudflare
       if: github.event_name == 'push'
@@ -47,19 +47,20 @@ jobs:
           curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records" \
             -H "Authorization: Bearer ${CF_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d '{"type":"A","name":"'"${SUBDOMAIN}"'","content":"'"${IP_ADDRESS}"'","ttl":120,"proxied":false}'
+            -d '{"type":"A","name":"'"${SUBDOMAIN}"'","content":"'"${IP_ADDRESS}"'","ttl":120,"proxied":true}'
         else
           # Update existing DNS record
           curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${RECORD_EXISTS}" \
             -H "Authorization: Bearer ${CF_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d '{"type":"A","name":"'"${SUBDOMAIN}"'","content":"'"${IP_ADDRESS}"'","ttl":120,"proxied":false}'
+            -d '{"type":"A","name":"'"${SUBDOMAIN}"'","content":"'"${IP_ADDRESS}"'","ttl":120,"proxied":true}'
         fi
 
     - name: Build and Push Docker Image
       env:
         BRANCH: ${{ steps.extract_branch.outputs.branch }}
       run: |
+        echo "BRANCH: $BRANCH"
         docker build -t myblog:$BRANCH .
         docker push myblog::$BRANCH
 
