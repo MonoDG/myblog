@@ -36,11 +36,10 @@ jobs:
         IP_ADDRESS="${{ secrets.FEATURE_DROPLET_IP }}"
         echo "BRANCH: $BRANCH"
         echo "SUBDOMAIN: $SUBDOMAIN"
-        echo "IP_ADDRESS: $IP_ADDRESS"
         # Check if DNS record already exists
         RECORD_EXISTS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
           -H "Authorization: Bearer ${CF_API_TOKEN}" \
-          -H "Content-Type: application/json" | jq -r '.result[0].id')
+          -H "Content-Type: application/json" | jq -r '.result[0].id // empty')
         echo "RECORD_EXISTS: $RECORD_EXISTS"
         # Create or update DNS record
         if [ -z "$RECORD_EXISTS" ]; then
@@ -84,7 +83,7 @@ jobs:
         # Fetch record id:
         RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
           -H "Authorization: Bearer ${CF_API_TOKEN}" \
-          -H "Content-Type: application/json" | jq -r '.result[0].id')
+          -H "Content-Type: application/json" | jq -r '.result[0].id // empty')
         # Delete DNS record
         if [ -n "$RECORD_ID"]; then
           curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${RECORD_ID}" \
