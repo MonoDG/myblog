@@ -27,7 +27,7 @@ jobs:
       if: github.event_name == 'push'
       env:
         CF_API_TOKEN: ${{ secrets.CLOUDFARE_API_TOKEN }}
-        CF_ZONE_ID: ${{ secrets.CLOUDFATE_ZONE_ID }}
+        CF_ZONE_ID: ${{ secrets.CLOUDFARE_ZONE_ID }}
       run: |
         BRANCH_NAME=$(echo ${{ steps.extract_branch.outputs.branch }})
         SUBDOMAIN="${BRANCH_NAME}.themono.work"
