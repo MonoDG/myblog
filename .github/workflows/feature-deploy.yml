@@ -34,11 +34,14 @@ jobs:
         BRANCH_NAME=$BRANCH
         SUBDOMAIN="${BRANCH_NAME}.themono.work"
         IP_ADDRESS="${{ secrets.FEATURE_DROPLET_IP }}"
+        echo "BRANCH: $BRANCH"
+        echo "SUBDOMAIN: $SUBDOMAIN"
+        echo "IP_ADDRESS: $IP_ADDRESS"
         # Check if DNS record already exists
         RECORD_EXISTS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
           -H "Authorization: Bearer ${CF_API_TOKEN}" \
           -H "Content-Type: application/json" | jq -r '.result[0].id')
-        echo $RECORD_EXISTS
+        echo "RECORD_EXISTS: $RECORD_EXISTS"
         # Create or update DNS record
         if [ -z "$RECORD_EXISTS" ]; then
           # Create new DNS record
@@ -55,9 +58,11 @@ jobs:
         fi
 
     - name: Build and Push Docker Image
+      env:
+        BRANCH: ${{ steps.extract_branch.outputs.branch }}
       run: |
-        docker build -t myblog:{{ steps.extract_branch.outputs.branch }} .
-        docker push myblog::${{ steps.extract_branch.outputs.branch }}
+        docker build -t myblog:$BRANCH .
+        docker push myblog::$BRANCH
 
     - name: Deploy to DigitalOcean Droplet
       env:
