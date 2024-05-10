@@ -38,6 +38,7 @@ jobs:
         RECORD_EXISTS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
           -H "Authorization: Bearer ${CF_API_TOKEN}" \
           -H "Content-Type: application/json" | jq -r '.result[0].id')
+        echo $RECORD_EXISTS
         # Create or update DNS record
         if [ -z "$RECORD_EXISTS" ]; then
           # Create new DNS record
