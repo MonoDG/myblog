@@ -81,7 +81,7 @@ jobs:
       env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
       run: |
-        ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_ACCESS_TOKEN }}"
+        ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}"
         ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull monodg/myblog:$BRANCH && docker run -d -p 80:80 monodg/myblog:$BRANCH"
 
     - name: Remove DNS Record on Cloudflare
