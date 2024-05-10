@@ -62,7 +62,7 @@ jobs:
       run: |
         echo "BRANCH: $BRANCH"
         docker build -t myblog:$BRANCH .
-        docker push myblog::$BRANCH
+        docker push myblog:$BRANCH
 
     - name: Deploy to DigitalOcean Droplet
       env:
