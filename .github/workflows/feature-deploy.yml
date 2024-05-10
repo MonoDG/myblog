@@ -22,8 +22,7 @@ jobs:
     - name: Extract branch name
       id: extract_branch
       run: |
-        echo "{branch}={$(echo ${GITHUB_REF#refs/heads/} | tr / -)}" >> "$GITHUB_ENV"
-        echo $branch
+        echo "{branch}={$(echo ${GITHUB_REF#refs/heads/} | tr / -)}" >> "$GITHUB_OUTPUT"
 
     - name: Setup or Update DNS Record on Cloudflare
       if: github.event_name == 'push'
@@ -31,7 +30,7 @@ jobs:
         CF_API_TOKEN: ${{ secrets.CLOUDFARE_API_TOKEN }}
         CF_ZONE_ID: ${{ secrets.CLOUDFARE_ZONE_ID }}
       run: |
-        BRANCH_NAME=$branch
+        BRANCH_NAME=$(echo ${{ steps.extract_branch.outputs.branch }})
         SUBDOMAIN="${BRANCH_NAME}.themono.work"
         IP_ADDRESS="${{ secrets.FEATURE_DROPLET_IP }}"
         # Check if DNS record already exists
@@ -72,7 +71,7 @@ jobs:
         CF_API_TOKEN: ${{ secrets.CLOUDFARE_API_TOKEN }}
         CF_ZONE_ID: ${{ secrets.CLOUDFARE_ZONE_ID }}
       run: |
-        BRANCH_NAME=$branch
+        BRANCH_NAME=$(echo ${{ steps.extract_branch.outputs.branch }})
         SUBDOMAIN="${BRANCH_NAME}.themono.work"
         # Fetch record id:
         RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
