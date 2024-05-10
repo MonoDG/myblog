@@ -67,7 +67,7 @@ jobs:
         BRANCH: ${{ steps.extract_branch.outputs.branch }}
       run: |
         echo "BRANCH: $BRANCH"
-        docker build -t myblog:$BRANCH .
+        docker build -t monodg/myblog:$BRANCH .
         docker push monodg/myblog:$BRANCH
 
     - name: Deploy to DigitalOcean Droplet
