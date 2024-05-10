@@ -70,14 +70,18 @@ jobs:
         docker build -t monodg/myblog:$BRANCH .
         docker push monodg/myblog:$BRANCH
 
-    - name: Deploy to DigitalOcean Droplet
-      env:
-        BRANCH: ${{ steps.extract_branch.outputs.branch }}
-        SSH_KEY: ${{ secrets.SSH_KEY }}
+    - name: Setup SSH key
       run: |
-        echo "$SSH_KEY" > deploy_key.pem
-        chmod 600 deploy_key.pem
-        ssh -o StrictHostKeyChecking=no -i deploy_key.pem root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull monodg/myblog:$BRANCH && docker run -d -p 80:80 monodg/myblog:$BRANCH"
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        ssh-keyscan -H ${{ secrets.FEATURE_DROPLET_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to DigitalOcean
+      env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      run: |
+        ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker pull monodg/myblog:$BRANCH && docker run -d -p 80:80 monodg/myblog:$BRANCH"
 
     - name: Remove DNS Record on Cloudflare
       if: github.event_name == 'delete'
