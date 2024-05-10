@@ -21,7 +21,9 @@ jobs:
 
     - name: Extract branch name
       id: extract_branch
-      run: echo "{branch}={$(echo ${GITHUB_REF#refs/heads/} | tr / -)}" >> "$GITHUB_ENV"
+      run: |
+        echo "{branch}={$(echo ${GITHUB_REF#refs/heads/} | tr / -)}" >> "$GITHUB_ENV"
+        echo $branch
 
     - name: Setup or Update DNS Record on Cloudflare
       if: github.event_name == 'push'
@@ -49,6 +51,7 @@ jobs:
             -H "Authorization: Bearer ${CF_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{"type":"A","name":"'"${SUBDOMAIN}"'","content":"'"${IP_ADDRESS}"'","ttl":120,"proxied":false}'
+        fi
 
     - name: Build and Push Docker Image
       run: |
@@ -80,3 +83,4 @@ jobs:
           curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/dns_records/${RECORD_ID}" \
             -H "Authorization: Bearer ${CF_API_TOKEN}" \
             -H "Content-Type: application/json"
+        fi
