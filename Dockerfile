@@ -1,5 +1,5 @@
 FROM php:8.3-fpm as php
-RUN apt-get upadte && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx
 COPY . /var/www/html
 COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
