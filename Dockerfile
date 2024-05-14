@@ -1,10 +1,6 @@
-FROM php:8.3.7RC1-fpm-bullseye as php
-COPY index.php /var/www/html/
-WORKDIR /var/www/html
-
-FROM nginx:stable-alpine as nginx
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/
-COPY --from=php /var/www/html /var/www/html
+FROM php:8.3-fpm as php
+RUN apt-get upadte && apt-get install -y nginx
+COPY . /var/www/html
+COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD service php8.3-fpm start && nginx -g 'daemon off;'
