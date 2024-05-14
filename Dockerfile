@@ -1,6 +1,6 @@
-FROM php:8.3-fpm as php
+FROM php:8.3-fpm
 RUN apt-get update && apt-get install -y nginx
-COPY . /var/www/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY index.php /var/www/html
+COPY myblog.conf /etc/nginx/conf.d/myblog.conf
 EXPOSE 80
-CMD service php-fpm start && nginx -g 'daemon off;'
+CMD php-fpm -D && nginx -g 'daemon off;'
