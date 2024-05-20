@@ -33,7 +33,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/nginx:latest
 
       - name: SSH to DigitalOcean Droplet and deploy stack
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.FEATURE_DROPLET_IP }}
           username: root
