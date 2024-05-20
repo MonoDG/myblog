@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and Push PHP image
         run: |
-          docker build -r ${{ secrets.DOCKER_USERNAME }}/php-fpm:latest -f Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/php-fpm:latest -f Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/php-fpm:latest
 
       - name: Build and push Nginx image
