@@ -41,6 +41,7 @@ jobs:
 
       - name: Deploy to DigitalOcean
         run: |
+          scp -r ./myblog root@${{ secrets.FEATURE_DROPLET_IP }}:/root
           ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}"
           ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker stack rm my_php_stack || true"
           ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker stack deploy -c docker-stack.yml my_php_stack"
