@@ -32,15 +32,15 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/nginx:latest -f Dockerfile.nginx .
           docker push ${{ secrets.DOCKER_USERNAME }}/nginx:latest
 
-      - name: SSH to DigitalOcean Droplet and deploy stack
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.FEATURE_DROPLET_IP }}
-          username: david
-          password: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            mkdir /home/david/myblog
-            cd /home/david/myblog
-            docker stack rm my_php_stack || true
-            docker stack deploy -c docker-stack.yml my_php_stack
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.shh/deploy_key
+          ssh-keyscan -H ${{ secrets.FEATURE_DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -i ~/.ssh/deploy_key david@${{ secrets.FEATURE_DROPLET_IP }} "docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}"
+          ssh -i ~/.ssh/deploy_key david@${{ secrets.FEATURE_DROPLET_IP }} "docker stack rm my_php_stack || true"
+          ssh -i ~/.ssh/deploy_key david@${{ secrets.FEATURE_DROPLET_IP }} "docker stack deploy -c docker-stack.yml my_php_stack"
