@@ -36,9 +36,10 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.FEATURE_DROPLET_IP }}
-          username: root
+          username: david
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /root/my-php-project
+            mkdir /home/david/myblog
+            cd /home/david/myblog
             docker stack rm my_php_stack || true
             docker stack deploy -c docker-stack.yml my_php_stack
