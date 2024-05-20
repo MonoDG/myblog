@@ -45,5 +45,4 @@ jobs:
           scp -i ~/.ssh/deploy_key -r nginx root@${{ secrets.FEATURE_DROPLET_IP }}:/root
           scp -i ~/.ssh/deploy_key docker-stack.yml root@${{ secrets.FEATURE_DROPLET_IP }}:/root
           ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}"
-          ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker stack rm --detach=false my_php_stack || true"
           ssh -i ~/.ssh/deploy_key root@${{ secrets.FEATURE_DROPLET_IP }} "docker stack deploy --detach=true -c docker-stack.yml my_php_stack"
