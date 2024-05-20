@@ -1,8 +1,12 @@
-FROM php:8.3-fpm
-RUN apt-get update && apt-get install -y nginx
-COPY index.php /var/www/html
-COPY myblog /etc/nginx/sites-available/myblog
-RUN ln -s /etc/nginx/sites-available/myblog /etc/nginx/sites-enabled/myblog
-RUN unlink /etc/nginx/sites-enabled/default
-EXPOSE 80
-CMD php-fpm -D && nginx -g 'daemon off;'
+# Use the official PHP image as the base image
+FROM php:8.1-fpm
+
+# Set the working directory
+WORKDIR /var/www/html
+
+# Copy the current directory contents into the container
+COPY . .
+
+# Expose port 9000 and start PHP-FPM server
+EXPOSE 9000
+CMD ["php-fpm"]

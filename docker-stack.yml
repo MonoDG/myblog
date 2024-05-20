@@ -1,0 +1,15 @@
+services:
+  php:
+    image: monodg/php-fpm:latest
+    volumes:
+      - .:/var/www/html
+
+  nginx:
+    image: monodg/nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
