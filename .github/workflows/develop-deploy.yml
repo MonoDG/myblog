@@ -37,6 +37,7 @@ jobs:
         with:
           host: ${{ secrets.FEATURE_DROPLET_IP }}
           username: david
+          password: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_KEY }}
           script: |
             mkdir /home/david/myblog
